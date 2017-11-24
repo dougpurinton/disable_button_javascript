@@ -69,13 +69,13 @@ if (window.attachEvent) {
 </div>
 </noscript>
 
-<form id="myform1_id" method="post" onsubmit="disableSubmit(this)">
+<form id="myform1_id" method="post" action="" onsubmit="disableSubmit(this)">
 <input type="hidden" name="hidden_form_name" value="myform1_value"/>
 <input type="submit" id="submitbutton1_id" name="submitbutton1_name" value="Submit" disabled="disabled"/>
 </form>
 <br>
 <br>
-<form id="myform2_id" method="post" onsubmit="disableSubmit(this)">
+<form id="myform2_id" method="post" action="" onsubmit="disableSubmit(this)">
 <input type="hidden" name="hidden_form_name" value="myform2_value"/>
 <input type="submit" id="submitbutton2_id" name="submitbutton2_name" value="Submit" disabled="disabled"/>
 </form>
