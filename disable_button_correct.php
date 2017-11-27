@@ -5,25 +5,48 @@
 <meta charset = "UTF-8"/>
 
 <?php
-function postIsHiddenValue($f_hidden_value)
+
+$the_request = null;
+$input_the_method = null;
+
+// This check excludes 'HEAD' and 'PUT'.
+if ($_SERVER['REQUEST_METHOD'] === 'POST')
 {
-	if (isset($_POST))
-	{
-		if (in_array($f_hidden_value, $_POST, true))
-		{
-		return true;
-		}
-	}
-return false;
+ $the_request = &$_POST;
+ $input_the_method = INPUT_POST;
+}
+elseif ($_SERVER['REQUEST_METHOD'] === 'GET')
+{
+ $the_request = &$_GET;
+ $input_the_method = INPUT_GET;
 }
 
-if($_SERVER['REQUEST_METHOD'] === 'POST' && postIsHiddenValue("myform1_value"))
+function IsHiddenValue($f_hidden_value)
+{
+ global $the_request;
+	if (!is_null($the_request))
+	{
+		if (isset($the_request['hidden_form_name']))
+		{
+			if ($the_request['hidden_form_name'] === $f_hidden_value)
+			{
+			 return true;
+			}
+		}
+	}
+ return false;
+}
+
+if(IsHiddenValue("myform1_value"))
 {
 	sleep(3);
+	// only use $input_the_method with the filter_input function when IsHiddenValue returns true.
+	$sanitized_text = filter_input($input_the_method, 'zip_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+	echo $sanitized_text;
 	echo "<script type = \"text/javascript\">alert(\"Yah! You were able to display myform1_value in PHP!\");</script>";
 }
 
-if($_SERVER['REQUEST_METHOD'] === 'POST' && postIsHiddenValue("myform2_value"))
+if(IsHiddenValue("myform2_value"))
 {
 	sleep(3);
 	echo "<script type = \"text/javascript\">alert(\"Yah! You were able to display myform2_value in PHP!\");</script>";
@@ -46,18 +69,17 @@ function disableSubmit(thisform)
 {
 	$('submitbutton1_id').disabled = true;
 	$('submitbutton2_id').disabled = true;
-	thisform.action = "<?php echo htmlentities($_SERVER['PHP_SELF']); ?>"; // this action attribute can be changed to any existing PHP file.
+	thisform.action = "<?php echo htmlentities($_SERVER['PHP_SELF'], ENT_QUOTES, "UTF-8"); ?>"; // this action attribute can be changed to any existing PHP file.
 	thisform.submit();
 }
 
 // This is used to make sure the correct function (onload or load) is used and appended correctly, instead of recreating it (which can cause errors).
-if (window.attachEvent) {
-    window.attachEvent('onload', afterAllLoadsGoGoGo);
-} else if (window.addEventListener) {
-    window.addEventListener('load', afterAllLoadsGoGoGo, false);
-} else {
-    document.addEventListener('load', afterAllLoadsGoGoGo, false);
-}
+if (window.attachEvent)
+{window.attachEvent('onload', afterAllLoadsGoGoGo);} 
+else if (window.addEventListener)
+{window.addEventListener('load', afterAllLoadsGoGoGo, false);}
+else
+{document.addEventListener('load', afterAllLoadsGoGoGo, false);}
 </script>
 
 </head>
@@ -72,6 +94,7 @@ if (window.attachEvent) {
 <form id="myform1_id" method="post" action="" onsubmit="disableSubmit(this)">
 <input type="hidden" name="hidden_form_name" value="myform1_value"/>
 <input type="submit" id="submitbutton1_id" name="submitbutton1_name" value="Submit" disabled="disabled"/>
+<input type="text" name="zip_name" autocomplete="off" id="zip_id" value=""/>
 </form>
 <br>
 <br>

@@ -1,0 +1,6 @@
+if (in_array($f_hidden_value, $_POST, true))
+
+<?php
+$options=array('options'=>array('default'=>5, 'min_range'=>0, 'max_range'=>9));
+$priority=filter_input(INPUT_POST, 'priority', FILTER_VALIDATE_INT, $options);
+?>
