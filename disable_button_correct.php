@@ -36,17 +36,23 @@ function IsHiddenValue($f_hidden_value)
 	}
  return false;
 }
+// It's a good idea to include all PHP code above in every PHP script.
+// This way "IsHiddenValue" is all that needs to be called to check for form submission.
 
 if(IsHiddenValue("myform1_value"))
 {
 	sleep(3);
 	// only use $input_the_method with the filter_input function when IsHiddenValue returns true.
+	// FILTER_SANITIZE_FULL_SPECIAL_CHARS is equivalent to calling htmlspecialchars() with ENT_QUOTES set.
 	$sanitized_text = filter_input($input_the_method, 'zip_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-	echo $sanitized_text;
+	$unsanitized_text = $the_request['zip_name']; // In this case, the following is equivalent: $unsanitized_text = $_POST['zip_name'];
+	echo "The two lines below might look the same in the browser, but view the page source!<br>\n";
+	echo $sanitized_text . "<br>\n";
+	echo $unsanitized_text . "<br>\n";
 	echo "<script type = \"text/javascript\">alert(\"Yah! You were able to display myform1_value in PHP!\");</script>";
 }
 
-if(IsHiddenValue("myform2_value"))
+elseif(IsHiddenValue("myform2_value"))
 {
 	sleep(3);
 	echo "<script type = \"text/javascript\">alert(\"Yah! You were able to display myform2_value in PHP!\");</script>";
@@ -69,7 +75,7 @@ function disableSubmit(thisform)
 {
 	$('submitbutton1_id').disabled = true;
 	$('submitbutton2_id').disabled = true;
-	thisform.action = "<?php echo htmlentities($_SERVER['PHP_SELF'], ENT_QUOTES, "UTF-8"); ?>"; // this action attribute can be changed to any existing PHP file.
+	thisform.action = "<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, "UTF-8"); ?>"; // this action attribute can be changed to any existing PHP file.
 	thisform.submit();
 }
 
@@ -93,8 +99,10 @@ else
 
 <form id="myform1_id" method="post" action="" onsubmit="disableSubmit(this)">
 <input type="hidden" name="hidden_form_name" value="myform1_value"/>
-<input type="submit" id="submitbutton1_id" name="submitbutton1_name" value="Submit" disabled="disabled"/>
+<label for="zip_name">Try some of these special characters! &'"<> </label>
 <input type="text" name="zip_name" autocomplete="off" id="zip_id" value=""/>
+<br>
+<input type="submit" id="submitbutton1_id" name="submitbutton1_name" value="Submit" disabled="disabled"/>
 </form>
 <br>
 <br>
