@@ -61,8 +61,16 @@ elseif(IsHiddenValue("myform2_value"))
 
 <script type = "text/javascript">
 // This function returns the element passed to it by using its ID. It's used to simply improve the efficiency of coding event handlers.
-function $(id)
-{return document.getElementById(id);}
+function $(id) {return document.getElementById(id);}
+
+// This function accounts for older browsers so that this web page knows whether or not it can operate correctly or not.
+function addEvent(element, evnt, funct)
+{
+	if (element.attachEvent)
+	{return element.attachEvent('on'+evnt, funct);}
+	else
+	{return element.addEventListener(evnt, funct, false);}
+}
 
 // This funtion will run when the page fully loads, and without causing any errors.
 function afterAllLoadsGoGoGo()
@@ -75,17 +83,11 @@ function disableSubmit(thisform)
 {
 	$('submitbutton1_id').disabled = true;
 	$('submitbutton2_id').disabled = true;
-	thisform.action = "<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, "UTF-8"); ?>"; // this action attribute can be changed to any existing PHP file.
+	//thisform.action = "<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, "UTF-8"); ?>"; // this action attribute can be changed to any existing PHP file.
 	thisform.submit();
 }
 
-// This is used to make sure the correct function (onload or load) is used and appended correctly, instead of recreating it (which can cause errors).
-if (window.attachEvent)
-{window.attachEvent('onload', afterAllLoadsGoGoGo);} 
-else if (window.addEventListener)
-{window.addEventListener('load', afterAllLoadsGoGoGo, false);}
-else
-{document.addEventListener('load', afterAllLoadsGoGoGo, false);}
+addEvent(window, 'load', afterAllLoadsGoGoGo);
 </script>
 
 </head>
